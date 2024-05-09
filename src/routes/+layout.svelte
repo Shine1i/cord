@@ -12,7 +12,7 @@
 
 <TitleBar />
 <!-- * AUTH COMPONENT HERE!!!-->
-<!--<Authentication />-->
+<Authentication />
 <!-- * AUTH COMPONENT HERE!!!-->
 <div
 	class="hidden  bg-gray-800/5 backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
