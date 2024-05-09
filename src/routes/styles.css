@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: hsla(0, 0%, 22.75%, 100);
+    background-image: radial-gradient(at 21% 66%, hsla(357, 100%, 50%, 0.14) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0) 0px, transparent 50%);
+}
+
+#titlebar {
+    width: calc(100%);
+}
+
+#main {
+    height: calc(100% - 32px);
+}
