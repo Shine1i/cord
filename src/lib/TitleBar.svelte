@@ -1,4 +1,4 @@
-<header id="titlebar" class="w-full  fixed   h-8  grid grid-cols-12">
+<header id="titlebar" class="w-full  fixed   top-0 h-8  grid grid-cols-12">
 	<div id="drag-region"
 			 class=" h-full col-start-1 col-end-12 absolute left-0 justify-start ">
 	</div>
@@ -38,5 +38,4 @@
         height: 100%;
         -webkit-app-region: drag;
     }
-
 </style>

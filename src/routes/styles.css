@@ -7,8 +7,8 @@ body {
     min-height: 100vh;
     min-width: 100vw;
     background-color: hsla(0, 0%, 22.75%, 100);
-    background-image: radial-gradient(at 21% 66%, hsla(357, 100%, 50%, 0.14) 0px, transparent 50%),
-    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0) 0px, transparent 50%);
+    background-image: radial-gradient(at 38% 84%, hsla(357, 100%, 50%, 0.07) 0px, transparent 50%),
+    radial-gradient(at 48% 19%, hsla(357, 100%, 50%, 0.07) 0px, transparent 50%);
 }
 
 #titlebar {
@@ -17,4 +17,35 @@ body {
 
 #main {
     height: calc(100% - 32px);
+}
+
+body, html {
+    @apply h-full
+}
+
+section {
+    --sb-track-color: rgba(35, 46, 51, 0);
+    --sb-thumb-color: rgb(209 213 219 / 0.85);
+    --sb-size: 5px;
+}
+
+section::-webkit-scrollbar {
+    width: var(--sb-size)
+}
+
+section::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+}
+
+section::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 3px;
+
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    section {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
 }

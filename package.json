@@ -22,6 +22,7 @@
 	"@neoconfetti/svelte": "^2.2.1",
 	"@sveltejs/kit": "^2.5.7",
 	"@sveltejs/vite-plugin-svelte": "^3.1.0",
+	"@tailwindcss/forms": "^0.5.7",
 	"@types/eslint": "8.56.2",
 	"@typescript-eslint/eslint-plugin": "^7.8.0",
 	"@typescript-eslint/parser": "^7.8.0",

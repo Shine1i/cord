@@ -12,7 +12,6 @@ import require$$2$1 from 'querystring';
 import __cjs_url__ from 'node:url';
 import __cjs_path__ from 'node:path';
 import __cjs_mod__ from 'node:module';
-
 const __filename = __cjs_url__.fileURLToPath(import.meta.url);
 const __dirname = __cjs_path__.dirname(__filename);
 const require2 = __cjs_mod__.createRequire(import.meta.url);
@@ -23,11 +22,9 @@ const { env } = process;
 const isEnvSet = 'ELECTRON_IS_DEV' in env;
 const getFromEnv = Number.parseInt(env.ELECTRON_IS_DEV, 10) === 1;
 const isDev = isEnvSet ? getFromEnv : !electron$1.app.isPackaged;
-
 function getDefaultExportFromCjs(x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
-
 function getAugmentedNamespace(n) {
 	if (n.__esModule)
 		return n;
@@ -54,21 +51,18 @@ function getAugmentedNamespace(n) {
 	});
 	return a;
 }
-
 const fs$4 = require$$0$1;
 const path$5 = require$$2;
 var packageJson$1 = {
 	findAndReadPackageJson,
 	tryReadJsonAt
 };
-
 function findAndReadPackageJson() {
 	return tryReadJsonAt(getMainModulePath()) || tryReadJsonAt(extractPathFromArgs()) || tryReadJsonAt(process.resourcesPath, 'app.asar') || tryReadJsonAt(process.resourcesPath, 'app') || tryReadJsonAt(process.cwd()) || {
 		name: void 0,
 		version: void 0
 	};
 }
-
 function tryReadJsonAt(...searchPaths) {
 	if (!searchPaths[0]) {
 		return void 0;
@@ -92,7 +86,6 @@ function tryReadJsonAt(...searchPaths) {
 		return void 0;
 	}
 }
-
 function findUp(fileName, cwd) {
 	let currentPath = cwd;
 	while (true) {
@@ -108,7 +101,6 @@ function findUp(fileName, cwd) {
 		currentPath = dir;
 	}
 }
-
 function extractPathFromArgs() {
 	const matchedArgs = process.argv.filter((arg) => {
 		return arg.indexOf('--user-data-dir=') === 0;
@@ -119,7 +111,6 @@ function extractPathFromArgs() {
 	const userDataDir = matchedArgs[0];
 	return userDataDir.replace('--user-data-dir=', '');
 }
-
 function getMainModulePath() {
 	try {
 		return require2.main?.filename;
@@ -127,7 +118,6 @@ function getMainModulePath() {
 		return void 0;
 	}
 }
-
 const childProcess = require$$0$2;
 const os$3 = require$$1;
 const path$4 = require$$2;
@@ -579,7 +569,6 @@ var initialize$1 = {
 		});
 	}
 };
-
 function initializePreload({
 														 externalApi: externalApi2,
 														 getSessions,
@@ -614,7 +603,6 @@ function initializePreload({
 		getSessions
 	});
 }
-
 function initializeSpyRendererConsole({ externalApi: externalApi2, logger }) {
 	const levels = ['verbose', 'info', 'warning', 'error'];
 	externalApi2.onEveryWebContentsEvent(
@@ -628,9 +616,7 @@ function initializeSpyRendererConsole({ externalApi: externalApi2, logger }) {
 		}
 	);
 }
-
 var scope = scopeFactory$1;
-
 function scopeFactory$1(logger) {
 	return Object.defineProperties(scope2, {
 		defaultLabel: { value: '', writable: true },
@@ -659,7 +645,6 @@ function scopeFactory$1(logger) {
 		return newScope;
 	}
 }
-
 const scopeFactory = scope;
 let Logger$1 = class Logger {
 	static instances = {};
@@ -942,7 +927,6 @@ let ErrorHandler$1 = class ErrorHandler {
 		this.handle(error, { errorName: 'Unhandled rejection' });
 	}
 };
-
 function normalizeError(e) {
 	if (e instanceof Error) {
 		return e;
@@ -959,7 +943,6 @@ function normalizeError(e) {
 	}
 	return new Error(`Can't normalize error ${String(e)}`);
 }
-
 var ErrorHandler_1 = ErrorHandler$1;
 let EventLogger$1 = class EventLogger {
 	disposers = [];
@@ -1173,7 +1156,6 @@ let EventLogger$1 = class EventLogger {
 };
 var EventLogger_1 = EventLogger$1;
 var transform_1 = { transform: transform$5 };
-
 function transform$5({
 											 logger,
 											 message,
@@ -1188,7 +1170,6 @@ function transform$5({
 		return data;
 	}, initialData);
 }
-
 const { transform: transform$4 } = transform_1;
 var format$2 = {
 	concatFirstStringElements: concatFirstStringElements$1,
@@ -1222,7 +1203,6 @@ var format$2 = {
 		}
 	}
 };
-
 function concatFirstStringElements$1({ data }) {
 	if (typeof data[0] !== 'string' || typeof data[1] !== 'string') {
 		return data;
@@ -1232,7 +1212,6 @@ function concatFirstStringElements$1({ data }) {
 	}
 	return [`${data[0]} ${data[1]}`, ...data.slice(2)];
 }
-
 function timeZoneFromOffset(minutesOffset) {
 	const minutesPositive = Math.abs(minutesOffset);
 	const sign = minutesOffset >= 0 ? '-' : '+';
@@ -1240,7 +1219,6 @@ function timeZoneFromOffset(minutesOffset) {
 	const minutes = (minutesPositive % 60).toString().padStart(2, '0');
 	return `${sign}${hours}:${minutes}`;
 }
-
 function formatScope({ data, logger, message }) {
 	const { defaultLabel, labelLength } = logger?.scope || {};
 	const template = data[0];
@@ -1259,7 +1237,6 @@ function formatScope({ data, logger, message }) {
 	data[0] = template.replace('{scope}', scopeText);
 	return data;
 }
-
 function formatVariables({ data, message }) {
 	let template = data[0];
 	if (typeof template !== 'string') {
@@ -1298,7 +1275,6 @@ function formatVariables({ data, message }) {
 	}).trim();
 	return data;
 }
-
 function formatText({ data }) {
 	const template = data[0];
 	if (typeof template !== 'string') {
@@ -1323,7 +1299,6 @@ function formatText({ data }) {
 	}
 	return result;
 }
-
 var object = { exports: {} };
 (function(module) {
 	const util = require$$0$3;
@@ -1446,16 +1421,13 @@ const ANSI_COLORS = {
 	cyan: '\x1B[36m',
 	white: '\x1B[37m'
 };
-
 function styleToAnsi(style2) {
 	const color = style2.replace(/color:\s*(\w+).*/, '$1').toLowerCase();
 	return ANSI_COLORS[color] || '';
 }
-
 function resetAnsiStyle(string) {
 	return string + ANSI_COLORS.unset;
 }
-
 function transformStyles(data, onStyleFound, onStyleApplied) {
 	const foundStyles = {};
 	return data.reduce((result, item, index, array) => {
@@ -1486,7 +1458,6 @@ function transformStyles(data, onStyleFound, onStyleApplied) {
 		return result;
 	}, []);
 }
-
 const { concatFirstStringElements, format: format$1 } = format$2;
 const { maxDepth: maxDepth$2, toJSON: toJSON$2 } = objectExports;
 const { applyAnsiStyles, removeStyles: removeStyles$2 } = style;
@@ -1506,7 +1477,6 @@ const DEFAULT_FORMAT = `%c{h}:{i}:{s}.{ms}{scope}%c ${separator} {text}`;
 Object.assign(consoleTransportFactory, {
 	DEFAULT_FORMAT
 });
-
 function consoleTransportFactory(logger) {
 	return Object.assign(transport, {
 		format: DEFAULT_FORMAT,
@@ -1533,14 +1503,12 @@ function consoleTransportFactory(logger) {
 		});
 	}
 }
-
 function addTemplateColors({ data, message, transport }) {
 	if (transport.format !== DEFAULT_FORMAT) {
 		return data;
 	}
 	return [`color:${levelToStyle(message.level)}`, 'color:unset', ...data];
 }
-
 function canUseStyles(useStyleValue, level) {
 	if (typeof useStyleValue === 'boolean') {
 		return useStyleValue;
@@ -1549,19 +1517,16 @@ function canUseStyles(useStyleValue, level) {
 	const stream = useStderr ? process.stderr : process.stdout;
 	return stream && stream.isTTY;
 }
-
 function formatStyles(args) {
 	const { message, transport } = args;
 	const useStyles = canUseStyles(transport.useStyles, message.level);
 	const nextTransform = useStyles ? applyAnsiStyles : removeStyles$2;
 	return nextTransform(args);
 }
-
 function levelToStyle(level) {
 	const map = { error: 'red', warn: 'yellow', info: 'cyan', default: 'unset' };
 	return map[level] || map.default;
 }
-
 const EventEmitter$1 = require$$0$4;
 const fs$2 = require$$0$1;
 const os$1 = require$$1;
@@ -1692,7 +1657,6 @@ let File$2 = class File extends EventEmitter$1 {
 	}
 };
 var File_1 = File$2;
-
 function readFileSyncFromEnd(filePath, bytesCount) {
 	const buffer = Buffer.alloc(bytesCount);
 	const stats = fs$2.statSync(filePath);
@@ -1703,7 +1667,6 @@ function readFileSyncFromEnd(filePath, bytesCount) {
 	fs$2.closeSync(fd);
 	return buffer.toString('utf8', 0, totalBytes);
 }
-
 const File$1 = File_1;
 let NullFile$1 = class NullFile extends File$1 {
 	clear() {
@@ -1919,7 +1882,6 @@ function fileTransportFactory(logger, {
 		}).filter(Boolean);
 	}
 }
-
 function getDefaultFileName(processType = process.type) {
 	switch (processType) {
 		case 'renderer':
@@ -1930,11 +1892,9 @@ function getDefaultFileName(processType = process.type) {
 			return 'main.log';
 	}
 }
-
 const { maxDepth: maxDepth$1, toJSON: toJSON$1 } = objectExports;
 const { transform: transform$1 } = transform_1;
 var ipc = ipcTransportFactory;
-
 function ipcTransportFactory(logger, { externalApi: externalApi2 }) {
 	Object.assign(transport, {
 		depth: 3,
@@ -1954,14 +1914,12 @@ function ipcTransportFactory(logger, { externalApi: externalApi2 }) {
 		});
 	}
 }
-
 const http$1 = require$$0$5;
 const https = require$$1$1;
 const { transform } = transform_1;
 const { removeStyles } = style;
 const { toJSON, maxDepth } = objectExports;
 var remote = remoteTransportFactory;
-
 function remoteTransportFactory(logger) {
 	return Object.assign(transport, {
 		client: { name: 'electron-application' },
@@ -2028,7 +1986,6 @@ function remoteTransportFactory(logger) {
 		}));
 	}
 }
-
 const Logger2 = Logger_1;
 const ErrorHandler2 = ErrorHandler_1;
 const EventLogger2 = EventLogger_1;
@@ -2037,7 +1994,6 @@ const transportFile = file;
 const transportIpc = ipc;
 const transportRemote = remote;
 var createDefaultLogger_1 = createDefaultLogger$1;
-
 function createDefaultLogger$1({ dependencies, initializeFn }) {
 	const defaultLogger2 = new Logger2({
 		dependencies,
@@ -2068,7 +2024,6 @@ function createDefaultLogger$1({ dependencies, initializeFn }) {
 	};
 	return defaultLogger2;
 }
-
 const electron = electron$1;
 const ElectronExternalApi2 = ElectronExternalApi_1;
 const { initialize } = initialize$1;
@@ -2104,15 +2059,12 @@ externalApi.onIpcInvoke('__ELECTRON_LOG__', (_, { cmd = '', logId }) => {
 		}
 	}
 });
-
 function processMessage(message) {
 	defaultLogger.Logger.getInstance(message)?.processMessage(message);
 }
-
 const main = main$1;
 var main_1 = main;
 const log = /* @__PURE__ */ getDefaultExportFromCjs(main_1);
-
 function every(arr, cb) {
 	var i = 0, len = arr.length;
 	for (; i < len; i++) {
@@ -2126,7 +2078,6 @@ function every(arr, cb) {
 const SEP = '/';
 const STYPE = 0, PTYPE = 1, ATYPE = 2, OTYPE = 3;
 const SLASH = 47, COLON = 58, ASTER = 42, QMARK = 63;
-
 function strip(str) {
 	if (str === SEP)
 		return str;
@@ -2134,16 +2085,13 @@ function strip(str) {
 	var len = str.length - 1;
 	return str.charCodeAt(len) === SLASH ? str.substring(0, len) : str;
 }
-
 function split(str) {
 	return (str = strip(str)) === SEP ? [SEP] : str.split(SEP);
 }
-
 function isMatch(arr, obj, idx) {
 	idx = arr[idx];
 	return obj.val === idx && obj.type === STYPE || (idx === SEP ? obj.type > PTYPE : obj.type !== STYPE && (idx || '').endsWith(obj.end));
 }
-
 function match$1(str, all) {
 	var i = 0, tmp, segs = split(str), len = segs.length, l;
 	var fn = isMatch.bind(isMatch, segs);
@@ -2156,7 +2104,6 @@ function match$1(str, all) {
 	}
 	return [];
 }
-
 function parse$2(str) {
 	if (str === SEP) {
 		return [{ old: str, type: STYPE, val: str, end: '' }];
@@ -2215,7 +2162,6 @@ function parse$2(str) {
 	}
 	return out;
 }
-
 function exec$1(str, arr) {
 	var i = 0, x, y, segs = split(str), out = {};
 	for (; i < arr.length; i++) {
@@ -2229,7 +2175,6 @@ function exec$1(str, arr) {
 	}
 	return out;
 }
-
 const matchit = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
 	__proto__: null,
 	exec: exec$1,
@@ -2238,7 +2183,6 @@ const matchit = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
 }, Symbol.toStringTag, { value: 'Module' }));
 const require$$0 = /* @__PURE__ */ getAugmentedNamespace(matchit);
 const { exec, match, parse: parse$1 } = require$$0;
-
 class Trouter {
 	constructor(opts) {
 		this.opts = opts || {};
@@ -2279,7 +2223,6 @@ class Trouter {
 		};
 	}
 }
-
 var trouter = Trouter;
 var url = function(req) {
 	let url2 = req.url;
@@ -2304,26 +2247,21 @@ const http = require$$0$5;
 const Router = trouter;
 const { parse } = require$$2$1;
 const parser = url;
-
 function lead(x) {
 	return x.charCodeAt(0) === 47 ? x : '/' + x;
 }
-
 function value(x) {
 	let y = x.indexOf('/', 1);
 	return y > 1 ? x.substring(0, y) : x;
 }
-
 function mutate(str, req) {
 	req.url = req.url.substring(str.length) || '/';
 	req.path = req.path.substring(str.length) || '/';
 }
-
 function onError(err, req, res, next) {
 	let code = res.statusCode = err.code || err.status || 500;
 	res.end(err.length && err || err.message || http.STATUS_CODES[code]);
 }
-
 class Polka extends Router {
 	constructor(opts = {}) {
 		super(opts);
@@ -2400,7 +2338,6 @@ class Polka extends Router {
 		loop();
 	}
 }
-
 var polka = (opts) => new Polka(opts);
 const polka$1 = /* @__PURE__ */ getDefaultExportFromCjs(polka);
 const start = async () => {
@@ -2431,14 +2368,13 @@ const load = (mainWindow, port2) => {
 	}
 };
 const port = await start();
-
 async function createWindow() {
 	const mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 720,
 		backgroundColor: '#FFF',
 		webPreferences: {
-			preload: path$6.join(__dirname, '../preload/index.js')
+			preload: path$6.join(__dirname, '../preload/index.mjs')
 		},
 		frame: false
 	});
@@ -2446,7 +2382,6 @@ async function createWindow() {
 	if (isDev)
 		mainWindow.webContents.openDevTools();
 }
-
 app.whenReady().then(() => {
 	createWindow();
 	app.on('activate', () => {

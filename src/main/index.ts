@@ -13,7 +13,7 @@ async function createWindow() {
 		height: 720,
 		backgroundColor: '#FFF',
 		webPreferences: {
-			preload: nodePath.join(__dirname, '../preload/index.js')
+			preload: nodePath.join(__dirname, '../preload/index.mjs')
 		},
 		frame: false
 		
