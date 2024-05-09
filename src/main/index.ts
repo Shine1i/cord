@@ -11,6 +11,8 @@ async function createWindow() {
 	const mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 720,
+		minWidth: 1280,
+		minHeight: 720,
 		backgroundColor: '#FFF',
 		webPreferences: {
 			preload: nodePath.join(__dirname, '../preload/index.mjs')

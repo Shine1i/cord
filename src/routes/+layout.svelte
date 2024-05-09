@@ -4,14 +4,16 @@
 	import MessageFeed from '$lib/components/chat_components/MessageFeed.svelte';
 	import { goto } from '$app/navigation';
 	import Friend from '$lib/components/Friend.svelte';
+	import Authentication from '$lib/components/Authentication.svelte';
 	
 	let { children } = $props();
 	let layout = $state(0);
 </script>
 
 <TitleBar />
-
-
+<!-- * AUTH COMPONENT HERE!!!-->
+<Authentication />
+<!-- * AUTH COMPONENT HERE!!!-->
 <div
 	class="hidden  bg-gray-800/5 backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
 	<nav class=" h-full overflow-y-hidden">

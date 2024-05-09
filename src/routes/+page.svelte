@@ -3,6 +3,7 @@
 	import type { NewMessage } from '$lib/types';
 	import ProfileHeader
 		from '$lib/components/chat_components/ProfileHeader.svelte';
+	import { flip } from 'svelte/animate';
 	
 	let currentMessage = $state('');
 	
