@@ -5,8 +5,9 @@
 		lastSeen = null
 	} = $props();
 </script>
-<li class="flex gap-x-4 py-3 relative items-center">
-	<img class="h-10 w-10 flex-none rounded-md bg-gray-50"
+<li class="flex gap-x-4 py-3 relative items-center ">
+	<img
+		class="h-10 w-10 flex-none rounded-md bg-gray-50 ring-2 border border-slate-500 ring-slate-500"
 			 src="{avatar}"
 			 alt="">
 	<div class="min-w-0">

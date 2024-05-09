@@ -33,7 +33,7 @@
 			<div class="font-medium text-slate-200">{name}</div>
 			<span class="text-xs text-gray-500 dark:text-gray-400">{timestamp}</span>
 		</div>
-		<p class="rounded-lg {color}  p-3 text-sm text-gray-800  ">
+		<p class="rounded-lg {color}   p-3 text-sm text-gray-800  ">
 			{message}
 		</p>
 	</div>

@@ -11,8 +11,13 @@
 		</div>
 <!--		form or btn dont matter-->
 		<form action="#" class="mt-6 flex">
-			<input type="text" name="email" id="username" class="block w-full bg-gray-500/25 rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-600/40  focus:outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6" placeholder="Enter username">
-			<button type="submit" class="ml-4 flex-shrink-0 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Send invite</button>
+			<input type="text" name="email" id="username"
+						 class="block w-full bg-gray-500/25 rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-600/40  focus:outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-500 sm:text-sm sm:leading-6"
+						 placeholder="Enter username">
+			<button type="submit"
+							class="ml-4 flex-shrink-0 rounded-md bg-slate-300/25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-300/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+				Send invite
+			</button>
 		</form>
 	</div>
 	<div class="mt-10">
@@ -21,7 +26,10 @@
 			<li class="flex items-center justify-between space-x-3 py-4">
 				<div class="flex min-w-0 flex-1 items-center space-x-3">
 					<div class="flex-shrink-0">
-						<img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+						<img
+							class="h-10 w-10 rounded-md ring-2 border border-slate-500 ring-slate-500"
+							src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+							alt="">
 					</div>
 					<div class="min-w-0 flex-1">
 						<p class="truncate text-sm font-medium text-slate-200">Lindsay Walton</p>

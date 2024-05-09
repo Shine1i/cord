@@ -76,7 +76,7 @@
 		<div class="relative w-full">
 			<textarea onkeydown={handleKeyDown} rows="2" bind:value={currentMessage}
 								name="prompt" id="prompt"
-								class="block text-white w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset bg-gray-500/25 outline-none ring-gray-600/40 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6 "></textarea>
+								class="block text-white w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset bg-gray-500/25 outline-none ring-gray-600/40 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-500 sm:text-sm sm:leading-6 "></textarea>
 			<button onclick={addMessage}
 							class="absolute top-2/4 right-3 transform -translate-y-2/4">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
