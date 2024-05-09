@@ -23,29 +23,29 @@ body, html {
     @apply h-full
 }
 
-section {
+* {
     --sb-track-color: rgba(35, 46, 51, 0);
     --sb-thumb-color: rgb(209 213 219 / 0.85);
     --sb-size: 5px;
 }
 
-section::-webkit-scrollbar {
+*::-webkit-scrollbar {
     width: var(--sb-size)
 }
 
-section::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: var(--sb-track-color);
     border-radius: 3px;
 }
 
-section::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     background: var(--sb-thumb-color);
     border-radius: 3px;
 
 }
 
 @supports not selector(::-webkit-scrollbar) {
-    section {
+    * {
         scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
     }
 }
