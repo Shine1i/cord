@@ -1,42 +1,109 @@
-<!-- WEBrtcvoice.svelte -->
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { WebRTCPeer } from './webrtcPeer';
+	import { onMount } from 'svelte';
+	import WebRTCPeer from './webrtcPeer';
 
 	let localStream: MediaStream;
 	let remoteStream: MediaStream;
-	let peer: WebRTCPeer;
-	let friendId = 'client-demo';
-
+	let webRTCPeer: WebRTCPeer;
+	let showCallPopup = $state(false);
+	let pendingPromise = createPendingPromise();
+	let channelName = $state('voice-chat-1');
 	onMount(async () => {
-		const vid1 = document.getElementById('vid1')! as HTMLVideoElement;
-		const vid2 = document.getElementById('vid2')! as HTMLVideoElement;
-		try {
-			localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-			peer = new WebRTCPeer(localStream,friendId);
-			peer.on('remoteStream', (stream: MediaStream) => {
-				remoteStream = stream;
-			});
-			peer.on('close', () => {
-				// Handle peer connection close
-			});
-			await peer.start();
-			vid1.srcObject = localStream;
-			vid2.srcObject = remoteStream;
-		} catch (error) {
-			console.error('Error setting up WebRTC:', error);
-		}
+		localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+		webRTCPeer = new WebRTCPeer(
+			{
+				localStream,
+				channelName,
+				iceServers: [
+					{
+						urls: 'stun:freeturn.net:3478'
+					},
+					{
+						urls: 'stun:freeturn.net:5349'
+					},
+					{
+						urls: 'turn:freeturn.net:5349',
+						username: 'free',
+						credential: 'free'
+					},
+					{
+						urls: 'turn:freeturn.net:3478',
+						username: 'free',
+						credential: 'free'
+					}
+				]
+			},
+			async () => {
+				return await pendingPromise.promise;
+			}
+		);
+
+		webRTCPeer.on('remoteStreamAdded', (stream) => {
+			remoteStream = stream;
+			const remoteAudio = document.getElementById('remoteAudio') as HTMLAudioElement;
+			remoteAudio.srcObject = remoteStream;
+		});
+
+		webRTCPeer.on('callReceived', () => {
+			showCallPopup = true;
+		});
+		webRTCPeer.on('callRejected', () => {
+			showCallPopup = false;
+		});
 	});
 
-	onDestroy(() => {
-		if (peer) {
-			peer.stop();
-		}
-	});
+	function startCall() {
+		webRTCPeer.createOffer();
+	}
+	function acceptCall() {
+		//webRTCPeer.acceptCall();
+		showCallPopup = false;
+		pendingPromise.resolve(true);
+	}
+
+	function rejectCall() {
+		pendingPromise.resolve(false);
+		showCallPopup = false;
+	}
+	function createPendingPromise() {
+		let resolveFunc: (value: boolean | PromiseLike<boolean>) => void;
+		let rejectFunc: (reason?: any) => void;
+		const promise = new Promise<boolean>((resolve, reject) => {
+			resolveFunc = resolve;
+			rejectFunc = reject;
+		});
+
+		return {
+			promise,
+			resolve: resolveFunc!,
+			reject: rejectFunc!
+		};
+	}
 </script>
-<div class="z-[999]">
-    <input type="text" bind:value={friendId} placeholder="Enter friend's ID" />
-    <video muted autoplay id="vid1"></video>
-    <video autoplay id="vid2"></video>
-    
+
+<input type="text" bind:value={channelName} />
+<div>
+	<audio id="remoteAudio" autoplay ></audio>
+	<button onclick={startCall}>Start Call</button>
 </div>
+
+{#if showCallPopup}
+	<div class="popup">
+		<h2>Incoming Call</h2>
+		<button onclick={acceptCall}>Accept</button>
+		<button onclick={rejectCall}>Reject</button>
+	</div>
+{/if}
+
+<style>
+	.popup {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: white;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	}
+</style>

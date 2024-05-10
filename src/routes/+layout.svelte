@@ -12,7 +12,7 @@
 
 </script>
 
-<TitleBar />
+<!-- <TitleBar /> -->
 <!-- * AUTH COMPONENT HERE!!!-->
 <!-- <Authentication /> -->
 <!-- * AUTH COMPONENT HERE!!!-->

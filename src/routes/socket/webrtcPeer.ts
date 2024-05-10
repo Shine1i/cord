@@ -1,100 +1,110 @@
 import { EventEmitter } from 'events';
-import Pusher,{Channel} from "pusher-js"
+import Pusher, { Channel } from 'pusher-js';
 
-export class WebRTCPeer extends EventEmitter {
+interface WebRTCPeerOptions {
+  localStream: MediaStream;
+  channelName: string;
+  iceServers: RTCIceServer[];
+}
+
+class WebRTCPeer extends EventEmitter {
+  //@ts-ignore
   private peerConnection: RTCPeerConnection;
   private localStream: MediaStream;
   private channel: Channel;
-  constructor(localStream: MediaStream,channelName: string) {
+  private pusher: Pusher;
+  answerCallback:() => Promise<boolean>;
+  constructor({ localStream, channelName, iceServers }: WebRTCPeerOptions,callback:() => Promise<boolean>) {
     super();
+    this.answerCallback = callback;
     this.localStream = localStream;
-    this.peerConnection = new RTCPeerConnection();
+    this.pusher = new Pusher('SoketiDefaultKey', {
+      wsHost: 'soketi.wasimhub.dev',
+      forceTLS: false,
+      cluster: '',
+    });
+    const test = ()=>{return true};
+    this.channel = this.pusher.subscribe(channelName);
+    this.setupPeerConnection(iceServers);
+    this.setupEventListeners();
+  }
+  
+  private setupPeerConnection(iceServers: RTCIceServer[]) {
+    this.peerConnection = new RTCPeerConnection({ iceServers });
+    this.localStream.getTracks().forEach((track) => {
+      this.peerConnection.addTrack(track, this.localStream);
+    });
+  }
+  
+  private setupEventListeners() {
     this.peerConnection.onicecandidate = this.handleICECandidate.bind(this);
-    this.peerConnection.ontrack = this.handleTrack.bind(this);
-
-    const pusher = new Pusher('SoketiDefaultKey', {
-        wsHost:"soketi.wasimhub.dev",
-        forceTLS:true,
-        cluster: '',
-      });
-      this.channel = pusher.subscribe(channelName);
-      this.channel.bind('offer', this.handleOffer.bind(this));
-      this.channel.bind('answer', this.handleAnswer.bind(this));
-      this.channel.bind('candidate', this.handleCandidate.bind(this));
+    this.peerConnection.ontrack = this.handleTrackEvent.bind(this);
+    this.peerConnection.onnegotiationneeded = this.handleNegotiationNeeded.bind(this);
+    
+    this.channel.bind('client-offer', this.handleOfferMessage.bind(this));
+    this.channel.bind('client-answer', this.handleAnswerMessage.bind(this));
+    this.channel.bind('client-ice-candidate', this.handleNewICECandidateMessage.bind(this));
   }
-
-  private async handleOffer(offer: RTCSessionDescriptionInit) {
-    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await this.peerConnection.createAnswer();
-    await this.peerConnection.setLocalDescription(answer);
-    this.sendSignalingMessage({ type: 'client-answer', answer });
-  }
-
-  private async handleAnswer(answer: RTCSessionDescriptionInit) {
-    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-  }
-
-  private async handleCandidate(candidate: RTCIceCandidateInit) {
-    await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-  }
-
+  
   private handleICECandidate(event: RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      this.sendSignalingMessage({ type: 'client-candidate', candidate: event.candidate });
+      this.channel.trigger('client-ice-candidate', {
+        candidate: event.candidate,
+      });
     }
   }
-
-  private handleTrack(event: RTCTrackEvent) {
-    this.emit('remoteStream', event.streams[0]);
-  }
-
-  private handleSignalingMessage(event: MessageEvent) {
-    const message = JSON.parse(event.data);
-    switch (message.type) {
-      case 'client-offer':
-        this.handleOffer(message.offer);
-        break;
-      case 'client-answer':
-        this.handleAnswer(message.answer);
-        break;
-      case 'client-candidate':
-        this.handleCandidate(message.candidate);
-        break;
-    }
-  }
-
   
-  private async sendSignalingMessage(message: SignalingMessage) {
-    console.log(message);
-    
-    this.channel.trigger(message.type, message);
+  private handleTrackEvent(event: RTCTrackEvent) {
+    this.emit('remoteStreamAdded', event.streams[0]);
   }
-
-  private handleSocketError(event: Event) {
-    console.error('WebSocket error:', event);
+  
+  private async handleNegotiationNeeded() {
+    try {
+      await this.createOffer();
+    } catch (error) {
+      console.error('Error creating offer:', error);
+    }
   }
-
-  private handleSocketClose(event: CloseEvent) {
-    console.log('WebSocket closed:', event);
-    this.peerConnection.close();
-    this.emit('close');
-  }
-
-  async start() {
-    this.localStream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.localStream));
+  
+  public async createOffer() {
     const offer = await this.peerConnection.createOffer();
     await this.peerConnection.setLocalDescription(offer);
-    this.sendSignalingMessage({ type: 'client-offer', offer });
+    this.channel.trigger('client-offer', { offer });
   }
+  
+  private async handleOfferMessage(data: any) {
 
-  stop() {
-    this.peerConnection.close();
+   
+    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+    const answer = await this.peerConnection.createAnswer();
+    await this.peerConnection.setLocalDescription(answer);
+    this.emit('callReceived');
+
+    const shouldAnswer =await this.answerCallback();
+    if(!shouldAnswer) return; 
+    this.channel.trigger('client-answer', { answer });
+  }
+ 
+  private async handleAnswerMessage(data: any) {
+    if (this.peerConnection.signalingState === 'have-local-offer') {
+      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+    } else {
+      console.warn('Unexpected signaling state:', this.peerConnection.signalingState);
+    }
+  }
+  
+  private async handleNewICECandidateMessage(data: any) {
+    try {
+      if (this.peerConnection.remoteDescription) {
+        await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } else {
+        console.warn('Remote description not set, queuing ICE candidate');
+        // You can queue the ICE candidate and add it later when the remote description is set
+      }
+    } catch (error) {
+      console.error('Error adding ICE candidate:', error);
+    }
   }
 }
 
-interface SignalingMessage {
-  type: 'client-offer' | 'client-answer' | 'client-candidate';
-  offer?: RTCSessionDescriptionInit;
-  answer?: RTCSessionDescriptionInit;
-  candidate?: RTCIceCandidateInit;
-}
+export default WebRTCPeer;
