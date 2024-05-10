@@ -14,7 +14,7 @@
 
 <TitleBar />
 <!-- * AUTH COMPONENT HERE!!!-->
-<Authentication />
+<!-- <Authentication /> -->
 <!-- * AUTH COMPONENT HERE!!!-->
 <div
 	class="hidden  bg-gray-400/10  backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
@@ -24,7 +24,7 @@
 			<li>
 				<button
 					onclick={()=>{
-							goto("/");
+							goto("/socket");
 							layout = 0;
 						}}
 					class=" {layout === 0 ? 'bg-slate-400/30' : 'bg-none'} text-slate-200 group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold">

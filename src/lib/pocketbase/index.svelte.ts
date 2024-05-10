@@ -1,15 +1,10 @@
-//import { currentUser } from "$lib/stores/user.svelte";
 import PocketBase from "pocketbase"
-import { getContext } from "svelte";
 import type { BaseAuthStore, RecordAuthResponse, RecordModel } from "pocketbase";
 export const pocketbase = new PocketBase("https://pocketbase.wasimhub.dev");
 
 export class UserManager {
     user = $state<RecordAuthResponse<RecordModel>>();
     authStore = $state<BaseAuthStore>();
-    constructor(pocketbase: PocketBase) {
-        $inspect(this.authStore)
-    }
 
     public async register(username: string, password: string, confirmPassword: string) {
 
@@ -48,9 +43,11 @@ export class UserManager {
         this.authStore = pocketbase.authStore;
         console.log(this.authStore);
         //works
-        this.authStore = JSON.parse(JSON.stringify(pocketbase.authStore));
+       // this.authStore = JSON.parse(JSON.stringify(pocketbase.authStore));
+
+        this.authStore = Object.assign({}, pocketbase.authStore)
+
         console.log(this.authStore);
-        
     
         
     }
@@ -59,4 +56,4 @@ export class UserManager {
         this.authStore = pocketbase.authStore
     }
 }
-export const userManager = new UserManager(pocketbase);
+export const userManager = new UserManager();
