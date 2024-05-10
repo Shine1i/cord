@@ -27,7 +27,7 @@ export class WebRTCPeer extends EventEmitter {
     await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
     const answer = await this.peerConnection.createAnswer();
     await this.peerConnection.setLocalDescription(answer);
-    this.sendSignalingMessage({ type: 'answer', answer });
+    this.sendSignalingMessage({ type: 'client-answer', answer });
   }
 
   private async handleAnswer(answer: RTCSessionDescriptionInit) {
@@ -40,7 +40,7 @@ export class WebRTCPeer extends EventEmitter {
 
   private handleICECandidate(event: RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      this.sendSignalingMessage({ type: 'candidate', candidate: event.candidate });
+      this.sendSignalingMessage({ type: 'client-candidate', candidate: event.candidate });
     }
   }
 
@@ -51,13 +51,13 @@ export class WebRTCPeer extends EventEmitter {
   private handleSignalingMessage(event: MessageEvent) {
     const message = JSON.parse(event.data);
     switch (message.type) {
-      case 'offer':
+      case 'client-offer':
         this.handleOffer(message.offer);
         break;
-      case 'answer':
+      case 'client-answer':
         this.handleAnswer(message.answer);
         break;
-      case 'candidate':
+      case 'client-candidate':
         this.handleCandidate(message.candidate);
         break;
     }
@@ -67,7 +67,7 @@ export class WebRTCPeer extends EventEmitter {
   private async sendSignalingMessage(message: SignalingMessage) {
     console.log(message);
     
-    this.channel.trigger("client-"+message.type, message);
+    this.channel.trigger(message.type, message);
   }
 
   private handleSocketError(event: Event) {
@@ -84,7 +84,7 @@ export class WebRTCPeer extends EventEmitter {
     this.localStream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.localStream));
     const offer = await this.peerConnection.createOffer();
     await this.peerConnection.setLocalDescription(offer);
-    this.sendSignalingMessage({ type: 'offer', offer });
+    this.sendSignalingMessage({ type: 'client-offer', offer });
   }
 
   stop() {
@@ -93,7 +93,7 @@ export class WebRTCPeer extends EventEmitter {
 }
 
 interface SignalingMessage {
-  type: 'offer' | 'answer' | 'candidate';
+  type: 'client-offer' | 'client-answer' | 'client-candidate';
   offer?: RTCSessionDescriptionInit;
   answer?: RTCSessionDescriptionInit;
   candidate?: RTCIceCandidateInit;
