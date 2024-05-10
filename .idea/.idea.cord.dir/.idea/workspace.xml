@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d839b63c-5e76-4fc9-a5c1-e95ccc08cce5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/out/main/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/out/main/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/preload/index.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/out/preload/index.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/preload/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/preload/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "vynxc"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Shine1i/cord",
+    "accountId": "89dffd60-d05e-40ec-b009-fb2df669d37c"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="2gGBQofzqLSqOzllcWTAa8571no" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "pnpm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\chayc\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\chayc\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\chayc\\AppData\\Local\\Symbols\\src"
+    ]
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d839b63c-5e76-4fc9-a5c1-e95ccc08cce5" name="Changes" comment="" />
+      <created>1713102394421</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713102394421</updated>
+      <workItem from="1713102395466" duration="204000" />
+      <workItem from="1715314022426" duration="176000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
