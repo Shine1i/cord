@@ -8,14 +8,20 @@
 	
 	let { children } = $props();
 	let layout = $state(0);
+	$effect(() => {
+		window.addEventListener('DOMContentLoaded', () => {
+			window.electronBridge.handleWindowControls();
+			console.log('hekki ');
+		});
+	});
 </script>
 
 <TitleBar />
 <!-- * AUTH COMPONENT HERE!!!-->
-<Authentication />
+<!--<Authentication />-->
 <!-- * AUTH COMPONENT HERE!!!-->
 <div
-	class="hidden  bg-gray-800/5 backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
+	class="hidden  bg-gray-400/10  backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
 	<nav class=" h-full overflow-y-hidden">
 		<ul role="list"
 				class=" pt-4 flex relative min-h-full flex-col items-center space-y-1">
@@ -80,8 +86,8 @@
 </main>
 
 <aside
-	class="fixed inset-y-0 left-12 hidden w-[352px] bg-gray-800/20 backdrop-blur-2xl overflow-y-auto    py-3 xl:block">
-	<div class="flex flex-col px-4">
+	class="fixed inset-y-0 left-12 hidden w-[352px] bg-gray-400/10 shadow-md shadow-slate-400  backdrop-blur-2xl overflow-y-auto    py-3 xl:block">
+	<div class="flex flex-col px-4 ">
 		<div
 			class="flex flex-wrap  py-4 items-center justify-between sm:flex-nowrap">
 			<div class="">

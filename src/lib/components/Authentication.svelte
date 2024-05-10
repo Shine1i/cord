@@ -40,7 +40,7 @@
 				
 				<div class="flex items-center justify-between">
 					<div class="flex items-center animate-bounce">
-						<input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-300 bg-gray-500/25 checked:bg-slate-400  hover:bg-slate-400
+						<input id="remember-me" name="remember-me" type="checkbox" class="h-4 checked:hover:bg-slate-300 rounded border-gray-300 bg-gray-500/25 checked:bg-slate-400  hover:bg-slate-400
 					focus-within:checked:bg-slate-400
 						focus:ring-slate-600">
 						<label for="remember-me"

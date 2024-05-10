@@ -16,7 +16,7 @@
 						 placeholder="Enter username">
 			<button type="submit"
 							class="ml-4 flex-shrink-0 rounded-md bg-slate-300/25 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-300/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-				Send invite
+				Add Friend
 			</button>
 		</form>
 	</div>
