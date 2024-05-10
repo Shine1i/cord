@@ -1,20 +1,26 @@
 import { EventEmitter } from 'events';
+import Pusher,{Channel} from "pusher-js"
 
 export class WebRTCPeer extends EventEmitter {
   private peerConnection: RTCPeerConnection;
   private localStream: MediaStream;
-  private socket: WebSocket;
-
-  constructor(localStream: MediaStream) {
+  private channel: Channel;
+  constructor(localStream: MediaStream,channelName: string) {
     super();
     this.localStream = localStream;
     this.peerConnection = new RTCPeerConnection();
     this.peerConnection.onicecandidate = this.handleICECandidate.bind(this);
     this.peerConnection.ontrack = this.handleTrack.bind(this);
-    this.socket = new WebSocket('ws://localhost:8080');
-    this.socket.onmessage = this.handleSignalingMessage.bind(this);
-    this.socket.onerror = this.handleSocketError.bind(this);
-    this.socket.onclose = this.handleSocketClose.bind(this);
+
+    const pusher = new Pusher('SoketiDefaultKey', {
+        wsHost:"soketi.wasimhub.dev",
+        forceTLS:true,
+        cluster: '',
+      });
+      this.channel = pusher.subscribe(channelName);
+      this.channel.bind('offer', this.handleOffer.bind(this));
+      this.channel.bind('answer', this.handleAnswer.bind(this));
+      this.channel.bind('candidate', this.handleCandidate.bind(this));
   }
 
   private async handleOffer(offer: RTCSessionDescriptionInit) {
@@ -57,8 +63,11 @@ export class WebRTCPeer extends EventEmitter {
     }
   }
 
+  
   private async sendSignalingMessage(message: SignalingMessage) {
-    this.socket.send(JSON.stringify(message));
+    console.log(message);
+    
+    this.channel.trigger("client-"+message.type, message);
   }
 
   private handleSocketError(event: Event) {
@@ -79,7 +88,6 @@ export class WebRTCPeer extends EventEmitter {
   }
 
   stop() {
-    this.socket.close();
     this.peerConnection.close();
   }
 }
