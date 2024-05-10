@@ -1,23 +1,20 @@
-<script>
+<script lang="ts">
+	import { userManager } from '$lib/pocketbase/index.svelte';
 	let register = $state(false);
-
-	import { authManager, pocketbase } from '$lib/pocketbase';
-	import { currentUser } from '$lib/stores/user.svelte';
-
-	let username = $state("");
-	let password = $state("");
-	let confirmPassword = $state("");
-	console.log(username);
+	
+	let username = $state('svynxc@gmail.com');
+	let password = $state('Q5QACWmrKv_YpSz');
+	let confirmPassword = $state('');
+	//let authStore = currentUser._authStore;
 	async function login() {
 		if (register) {
-			await authManager.register(username, password, confirmPassword);
+			await userManager.register(username, password, confirmPassword);
 		} else {
-			await authManager.login(username, password);
+			await userManager.login(username, password);
 		}
 	}
-	$effect(()=>{
-		console.log(currentUser.authStore);
-	})
+
+	
 </script>
 
 <div
@@ -25,13 +22,15 @@
 >
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">
 		<h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-slate-200">
-			{#if currentUser.authStore?.isValid}
-			You're logged in!
+			{#if userManager.authStore?.isValid}
+				You're logged in!
 			{:else}
-			Sign in to your account
+				Sign in to your account
 			{/if}
 		</h2>
-		<button onclick="{authManager.logout}">Logout</button>
+		<button onclick={()=>{
+			userManager.logout();
+		}}>Logout</button>
 	</div>
 
 	<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -155,7 +154,7 @@
 					<button
 						class="flex w-full items-center justify-center gap-3 rounded-md bg-slate-300 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-200 focus-visible:ring-transparent"
 						onclick={async () => {
-							await authManager.loginWithProvider('github');
+							await userManager.loginWithProvider('github');
 						}}
 					>
 						<svg

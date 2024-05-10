@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import Friend from '$lib/components/Friend.svelte';
 	import Authentication from '$lib/components/Authentication.svelte';
+
 	
 	let { children } = $props();
 	let layout = $state(0);
