@@ -6,18 +6,39 @@
 	import Friend from '$lib/components/Friend.svelte';
 	import Authentication from '$lib/components/Authentication.svelte';
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
+	import { chat } from '$lib/Chat';
+	import type { RecordModel } from 'pocketbase';
 
 	
 	let { children } = $props();
 	let layout = $state(0);
-	
-	$effect(() => {
-		pocketbase.authStore.onChange((auth, model) => {
+	let allChats = $state<any[]>([]);
+	let LastMessages = $state<any[]>([]);
+	$effect(async () => {
+		pocketbase.authStore.onChange(async (auth, model) => {
 			userRune.authStore = model;
-			console.log(model);
+			
 		});
 		
-		
+		setTimeout(async () => {
+			if (userRune.authStore) {
+				allChats = await chat.getChatWithUsers();
+				
+				await pocketbase.collection('chats').subscribe('*', async (e) => {
+					allChats = await chat.getChatWithUsers();
+				});
+				LastMessages = chat.getAllMessages(allChats[0].id);
+				console.log(LastMessages);
+				
+				allChats.forEach(chat => {
+					pocketbase.collection('messages').subscribe('*', async (e) => {
+						LastMessages = await chat.getAllMessages(chat.id);
+						console.log(LastMessages);
+					});
+				});
+			}
+			console.log('test');
+		}, 10000);
 	});
 </script>
 
@@ -139,14 +160,16 @@
 			</li>
 			{#if layout === 0}
 				<!--todo message feed clear -->
-				{#each Array(5) as feed}
+				{#if userRune.authStore}
+					{#each allChats as chat, i (chat.id)}
 					<MessageFeed
-						avatar="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-						name="Chelse Naggyua"
-						lastMessage="Hello lorum ipsum Hello lorssssssssssssssssssssssss "
-						messageTimeStamp="16:33"
+						avatar=""
+						name={chat.name}
+						lastMessage={LastMessages[i] ? LastMessages[i].content : ''}
+						messageTimeStamp="placeholder"
 					/>
 				{/each}
+				{/if}
 			{:else}
 				<ul role="list" class=" px-4 divide-slate-500">
 					<Friend

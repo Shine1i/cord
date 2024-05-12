@@ -58,17 +58,7 @@
 	}
 	
 	$effect(async () => {
-		// 	allMessages = await getAllMessages();
-		//
-		// 	pocketbase.collection("messages").subscribe("*", async (e) => {
-		// 		allMessages = await getAllMessages();
-		// 	});
-		//
-		// await sendMessage()
-		// const record = await pocketbase.collection('chats').getOne('gbtxvefjzgbv07i', {
-		// 	expand: 'messages,users'
-		// });
-		// console.log(record	);
-		console.log(getChatWithUsers());
+	
+	
 	});
 </script>
