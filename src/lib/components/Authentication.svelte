@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { userManager } from '$lib/pocketbase/index.svelte';
+	import { userManager, userRune } from '$lib/pocketbase/index.svelte';
+	import { log } from 'electron-log';
 	let register = $state(false);
 	
-	let username = $state('svynxc@gmail.com');
-	let password = $state('Q5QACWmrKv_YpSz');
-	let confirmPassword = $state('');
+	let username = $state('wasim');
+	let password = $state('Wasimsaid1#4d!!2');
+	let confirmPassword = $state('Wasimsaid1#4d!!2');
 	//let authStore = currentUser._authStore;
 	async function login() {
 		if (register) {
@@ -13,7 +14,11 @@
 			await userManager.login(username, password);
 		}
 	}
-
+	
+	$effect(() => {
+		console.log(password);
+		console.log(confirmPassword);
+	});
 	
 </script>
 
@@ -22,11 +27,7 @@
 >
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">
 		<h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-slate-200">
-			{#if userManager.authStore?.isValid}
-				You're logged in!
-			{:else}
 				Sign in to your account
-			{/if}
 		</h2>
 		<button onclick={()=>{
 			userManager.logout();

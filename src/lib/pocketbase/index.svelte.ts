@@ -1,59 +1,51 @@
-import PocketBase from "pocketbase"
-import type { BaseAuthStore, RecordAuthResponse, RecordModel } from "pocketbase";
-export const pocketbase = new PocketBase("https://pocketbase.wasimhub.dev");
+import PocketBase from 'pocketbase';
+import type {
+	BaseAuthStore,
+	RecordAuthResponse,
+	RecordModel
+} from 'pocketbase';
+
+export const pocketbase = new PocketBase('https://pocketbase.wasimhub.dev');
+
+class UserSession {
+	user = $state<RecordAuthResponse<RecordModel>>();
+	authStore = $state<any>();
+	
+}
+
+export const userRune = new UserSession();
 
 export class UserManager {
-    user = $state<RecordAuthResponse<RecordModel>>();
-    authStore = $state<BaseAuthStore>();
-
-    public async register(username: string, password: string, confirmPassword: string) {
-
-        const response = await pocketbase.collection('users').create({
-            username,
-            password,
-            confirmPassword
-        })
-        this.refreshAuthStore();
-        return response
-    }
-
-
-    public async login(username: string, password: string) {
-        const response = await pocketbase.collection('users').authWithPassword(username, password)
-        console.log(this.user);
-        this.user = response;
-        this.refreshAuthStore();
-        return response;
-
-    }
-
-    public async loginWithProvider(provider: string) {
-        const response = await pocketbase.collection('users').authWithOAuth2({ provider })
-        this.user = response;
-        this.refreshAuthStore();
-        return response;
-    }
-   
-    public logout() {
-
-
-        pocketbase.authStore.clear()
-
-        //dont work
-        this.authStore = pocketbase.authStore;
-        console.log(this.authStore);
-        //works
-       // this.authStore = JSON.parse(JSON.stringify(pocketbase.authStore));
-
-        this.authStore = Object.assign({}, pocketbase.authStore)
-
-        console.log(this.authStore);
-    
-        
-    }
-
-    public refreshAuthStore() {
-        this.authStore = pocketbase.authStore
-    }
+	
+	
+	public async register(username: string, password: string, confirmPassword: string) {
+		
+		const response = await pocketbase.collection('users').create({
+			username,
+			password,
+			passwordConfirm: confirmPassword
+		});
+		console.log(response, 'res');
+		return response;
+	}
+	
+	
+	public async login(username: string, password: string) {
+		const response = await pocketbase.collection('users').authWithPassword(username, password);
+		return response;
+		
+	}
+	
+	public async loginWithProvider(provider: string) {
+		const response = await pocketbase.collection('users').authWithOAuth2({ provider });
+		return response;
+	}
+	
+	public logout() {
+		pocketbase.authStore.clear();
+	}
+	
+	
 }
+
 export const userManager = new UserManager();

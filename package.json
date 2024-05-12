@@ -16,8 +16,7 @@
     "build:win": "npm run build && electron-builder --win --config",
     "build:mac": "npm run build && electron-builder --mac --config",
     "build:linux": "npm run build && electron-builder --linux --config",
-    "web":"vite dev --host"
-  
+	"web": "vite dev --host"
   },
   "devDependencies": {
     "@fontsource/fira-mono": "^5.0.13",
@@ -56,6 +55,7 @@
   "dependencies": {
     "@sveltejs/adapter-node": "^5.0.1",
     "events": "^3.3.0",
+	"peerjs": "^1.5.3",
     "pocketbase": "^0.21.2",
     "pusher-js": "8.4.0-rc2",
     "socket.io-client": "^4.7.5"
