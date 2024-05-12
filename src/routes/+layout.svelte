@@ -12,21 +12,19 @@
 	
 	let { children } = $props();
 	let layout = $state(0);
-	const useStorage = new LocalStorage<AuthModel>('user', null)
+	const userLocalStorage = new LocalStorage<AuthModel>('user', null)
 	
 	$effect(()=>{
-		if (useStorage.value !== null && useStorage.key !== '') {
-			userRune.authStore = useStorage.value;
-			console.log(userRune.authStore);
+		if (userLocalStorage.value !== null && userLocalStorage.key !== '') {
+			userRune.authStore = userLocalStorage.value;
 		}
-		pocketbase.authStore.onChange(async (auth, model) => {
-			useStorage.value = model;
+		pocketbase.authStore.onChange(async (token, model) => {
+			userLocalStorage.value = model;
 		});
 	})
 </script>
 
 <!-- <TitleBar /> -->
-<!-- * AUTH COMPONENT HERE!!!-->
 {#if userRune.authStore}
 	<div
 		class="hidden  bg-gray-400/10  backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
@@ -165,7 +163,6 @@
 {:else}
 	<Authentication />
 {/if}
-<!-- * AUTH COMPONENT HERE!!!-->
 
 
 
