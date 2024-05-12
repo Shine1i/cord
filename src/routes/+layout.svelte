@@ -6,47 +6,28 @@
 	import Friend from '$lib/components/Friend.svelte';
 	import Authentication from '$lib/components/Authentication.svelte';
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
-	import { chat } from '$lib/Chat';
-	import type { RecordModel } from 'pocketbase';
+	import { LocalStorage } from '$lib/utils/localStorage.svelte';
+	import type { AuthModel } from 'pocketbase';
 
 	
 	let { children } = $props();
 	let layout = $state(0);
-	let allChats = $state<any[]>([]);
-	let LastMessages = $state<any[]>([]);
-	$effect(async () => {
+	const useStorage = new LocalStorage<AuthModel>('user', null)
+	
+	$effect(()=>{
+		if (useStorage.value !== null && useStorage.key !== '') {
+			userRune.authStore = useStorage.value;
+			console.log(userRune.authStore);
+		}
 		pocketbase.authStore.onChange(async (auth, model) => {
-			userRune.authStore = model;
-			
+			useStorage.value = model;
 		});
-		
-		setTimeout(async () => {
-			if (userRune.authStore) {
-				allChats = await chat.getChatWithUsers();
-				
-				await pocketbase.collection('chats').subscribe('*', async (e) => {
-					allChats = await chat.getChatWithUsers();
-				});
-				LastMessages = chat.getAllMessages(allChats[0].id);
-				console.log(LastMessages);
-				
-				allChats.forEach(chat => {
-					pocketbase.collection('messages').subscribe('*', async (e) => {
-						LastMessages = await chat.getAllMessages(chat.id);
-						console.log(LastMessages);
-					});
-				});
-			}
-			console.log('test');
-		}, 10000);
-	});
+	})
 </script>
 
 <!-- <TitleBar /> -->
 <!-- * AUTH COMPONENT HERE!!!-->
-{#if !userRune.authStore}
-	<Authentication />
-{:else}
+{#if userRune.authStore}
 	<div
 		class="hidden  bg-gray-400/10  backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-16 lg:overflow-y-auto  lg:pb-4">
 		<nav class=" h-full overflow-y-hidden">
@@ -160,16 +141,15 @@
 			</li>
 			{#if layout === 0}
 				<!--todo message feed clear -->
-				{#if userRune.authStore}
-					{#each allChats as chat, i (chat.id)}
+				
+				{#each Array(5) as chat}
 					<MessageFeed
 						avatar=""
-						name={chat.name}
-						lastMessage={LastMessages[i] ? LastMessages[i].content : ''}
+						name={'placehlder'}
+						lastMessage={'placeholder'}
 						messageTimeStamp="placeholder"
 					/>
 				{/each}
-				{/if}
 			{:else}
 				<ul role="list" class=" px-4 divide-slate-500">
 					<Friend
@@ -182,7 +162,8 @@
 		</div>
 	
 	</aside>
-
+{:else}
+	<Authentication />
 {/if}
 <!-- * AUTH COMPONENT HERE!!!-->
 

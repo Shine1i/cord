@@ -4,7 +4,7 @@ import type {
 	RecordAuthResponse,
 	RecordModel
 } from 'pocketbase';
-
+import { LocalStorage } from '$lib/utils/localStorage.svelte';
 export const pocketbase = new PocketBase('https://pocketbase.wasimhub.dev');
 
 class UserSession {

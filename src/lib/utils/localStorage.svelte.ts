@@ -1,5 +1,4 @@
 import { browser } from '$app/environment';
-import { deserialize } from '$app/forms';
 
 export class LocalStorage<T>{
 	value = $state<T>() as T;
