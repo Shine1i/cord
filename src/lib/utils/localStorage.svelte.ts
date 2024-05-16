@@ -21,3 +21,5 @@ export class LocalStorage<T>{
 		return JSON.parse(value)
 	}
 }
+
+export let element = $state(null);

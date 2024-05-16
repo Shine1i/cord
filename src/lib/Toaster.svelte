@@ -1,9 +1,9 @@
-<script>
+<script lang="ts" generics="T">
 	let { toast: toastSnippet } = $props();
 	
 	let toasts = $state([]);
 	
-	export function toast(settings) {
+	export function toast(settings: T) {
 		const id = Math.random();
 		settings.id = id;
 		toasts.push(settings);
