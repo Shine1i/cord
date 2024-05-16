@@ -14,10 +14,27 @@
 	
 	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
 	
+	function isFriendAdded(id: string) {
+		return friends_local_storage.value.some(friend => friend.id === id);
+	}
+	
 	let username = $state('');
 	let search_list = $state<RecordModel[]>([]);
 	
-	async function onSubmit(event) {
+	async function handleButtonClick(user: RecordModel) {
+		const alreadyAdded = isFriendAdded(user.id);
+		
+		if (alreadyAdded) {
+			await pocketbase.collection('users').update(userRune.authStore.id, { 'friends-': [`${user.id}`] });
+			friends_local_storage.value = friends_local_storage.value.filter(friend => friend.id !== user.id);
+		} else {
+			
+			await pocketbase.collection('users').update(userRune.authStore.id, { 'friends+': [`${user.id}`] });
+			friends_local_storage.value.push(user);
+		}
+	}
+	
+	async function onSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		await getFirstUserByUsername(username);
 	}
@@ -83,12 +100,8 @@
 					</div>
 					<div class="flex-shrink-0">
 						<button
-							onclick={async ()=>{
-							await pocketbase.collection('users').update(userRune.authStore.id, {
-								"friends+": [`${search_list.id}`]
-							});
-							friends_local_storage.value.push(search_list)
-						}}
+							onclick={()=>{handleButtonClick(search_list)}}
+							
 							type="button"
 							class="inline-flex items-center gap-x-1.5 hover:bg-slate-500/25  p-2 rounded-md text-sm font-semibold leading-6 text-slate-200">
 							
@@ -99,7 +112,7 @@
 											clip-rule="evenodd" />
 							</svg>
 							
-							Add Friend
+							{isFriendAdded(search_list.id) ? 'Remove Friend' : 'Add Friend'}
 						</button>
 					</div>
 				</li>
