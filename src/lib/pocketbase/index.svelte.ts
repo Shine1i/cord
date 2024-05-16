@@ -19,13 +19,14 @@ export class UserManager {
 	
 	
 	public async register(username: string, password: string, confirmPassword: string) {
-		
+		const avatar = `https://api.dicebear.com/8.x/initials/svg?seed=${username}&backgroundColor=ff6666`;
 		const response = await pocketbase.collection('users').create({
 			username,
 			password,
-			passwordConfirm: confirmPassword
+			passwordConfirm: confirmPassword,
+			avatar
 		});
-		console.log(response, 'res');
+		
 		return response;
 	}
 	
