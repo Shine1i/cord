@@ -23,7 +23,7 @@
 	let { children } = $props();
 	let layout = $state(0);
 	const userLocalStorage = new LocalStorage<AuthModel>('user', null)
-
+	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
 	$effect(()=>{
 		
 		if (userLocalStorage.value !== null && userLocalStorage.key !== '') {

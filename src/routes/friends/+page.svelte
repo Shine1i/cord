@@ -6,7 +6,7 @@
 	} from '$lib/utils/localStorage.svelte';
 	import { setContext } from 'svelte';
 	
-	export const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
+	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
 	
 	async function getFirstUserByUsername(username: string) {
 		const record = await pocketbase.collection('users').getList(1, 50, {

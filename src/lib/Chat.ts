@@ -1,4 +1,6 @@
 import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
+import { LocalStorage } from '$lib/utils/localStorage.svelte';
+import type { RecordModel } from 'pocketbase';
 
 class Chat {
 	allChats: any = [];
