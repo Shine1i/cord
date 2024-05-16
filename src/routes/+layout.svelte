@@ -7,20 +7,25 @@
 	import Friend from '$lib/components/Friend.svelte';
 	import Authentication from '$lib/components/Authentication.svelte';
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
-	import { element, LocalStorage } from '$lib/utils/localStorage.svelte';
-	import type { AuthModel } from 'pocketbase';
+	import {
+		element,
+		LocalStorage
+	} from '$lib/utils/localStorage.svelte';
+	import type { AuthModel, RecordModel } from 'pocketbase';
 	import Toaster from '$lib/Toaster.svelte';
 	import toast from '$lib/Toaster.svelte';
 	import { fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-
+	import { getContext, setContext } from 'svelte';
+	
 	let toaster = $state();
 
 	let { children } = $props();
 	let layout = $state(0);
-	const userLocalStorage = new LocalStorage<AuthModel>('user', null);
+	const userLocalStorage = new LocalStorage<AuthModel>('user', null)
 
-	$effect(() => {
+	$effect(()=>{
+		
 		if (userLocalStorage.value !== null && userLocalStorage.key !== '') {
 			userRune.authStore = userLocalStorage.value;
 		}
@@ -164,10 +169,10 @@
 					<div class="flex gap-4 px-6 items-center">
 						<img
 							class="h-8 w-8 rounded-md bg-red-500 ring-2 border border-red-300 ring-red-300"
-							src={`https://api.dicebear.com/8.x/initials/svg?seed=${userRune.authStore.username}&backgroundColor=ff6666`}
-							alt=""
-						/>
-						<span aria-hidden="true">{userRune.authStore.username.toUpperCase()}</span>
+							src={userRune.authStore.avatar ?? `https://api.dicebear.com/8.x/initials/svg?seed=Cord&backgroundColor=ff6666`}
+							alt="">
+						<span
+							aria-hidden="true">{userRune.authStore.username.toUpperCase()}</span>
 					</div>
 					<button>
 						<svg
@@ -205,11 +210,14 @@
 				
 			{:else}
 				<ul role="list" class=" px-4 divide-slate-500">
-					<Friend
-						avatar="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-						name="Chelse Naggyua"
-						lastSeen="16:33"
-					/>
+					{#each friends_local_storage.value as friend}
+						<Friend
+							avatar="{friend.avatar}"
+							name="{friend.username}"
+							lastSeen="16:33-placeholder"
+						/>
+					{/each}
+				
 				</ul>
 			{/if}
 		</div>
