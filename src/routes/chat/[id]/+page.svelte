@@ -14,7 +14,6 @@
 	}
 	
 	let messageFeed = $state<NewMessage[]>([]);
-	console.log($page.params.id);
 	
 	// params
 	function addMessage(): void {

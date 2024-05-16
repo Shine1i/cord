@@ -1,19 +1,23 @@
-import Peer, { MediaConnection } from 'peerjs';
+import Peer, {type MediaConnection} from "peerjs";
 
 export class CallManager {
     private peer: Peer;
-    private roomId: string;
     private screenStream: MediaStream | undefined;
     private micStream: MediaStream | undefined;
     private call: MediaConnection | undefined;
-    public handleIncomingCall: (call: MediaConnection) => void = () => {};
+    public handleIncomingCall: (call: MediaConnection) => void = () => {
+    };
+
     constructor(roomId: string) {
-        this.peer = new Peer();
-        this.roomId = roomId;
+        this.peer = new Peer(roomId);
+
         this.peer.on('open', (id) => {
             console.log('My peer ID is: ' + id);
         });
+
         this.peer.on('call', (call) => {
+            console.log('Incoming call');
+            this.call = call;
             this.handleIncomingCall(call);
         });
     }
@@ -30,22 +34,22 @@ export class CallManager {
                 },
                 audio: true
             });
-            this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.micStream = await navigator.mediaDevices.getUserMedia({audio: true});
             this.screenStream.addTrack(this.micStream.getAudioTracks()[0]);
         } catch (error) {
             console.error('Error starting screen sharing:', error);
         }
     }
 
-    async joinRoom() {
+    async startCall(remotePeerId: string) {
         try {
             if (!this.screenStream) await this.startScreenSharing();
-            this.call = this.peer.call(this.roomId, this.screenStream!);
-            this.call.on('stream', (userVideoStream) => {
-                this.addVideoStream(userVideoStream);
+            this.call = this.peer.call(remotePeerId, this.screenStream!);
+            this.call.on('stream', (remoteStream) => {
+                this.addVideoStream(remoteStream);
             });
         } catch (error) {
-            console.error('Error joining room:', error);
+            console.error('Error making the call:', error);
         }
     }
 
@@ -60,15 +64,30 @@ export class CallManager {
     }
 
     acceptCall() {
-        // Implement accept call logic
+        if (this.call) {
+            this.call.answer(this.screenStream!);
+            this.call.on('stream', (remoteStream) => {
+                this.addVideoStream(remoteStream);
+            });
+        }
     }
 
     declineCall() {
-        // Implement decline call logic
+        if (this.call) {
+            this.call.close();
+            this.call = undefined;
+        }
+    }
+
+    disconnect() {
+        this.peer.disconnect();
+    }
+
+    reconnect() {
+        this.peer.reconnect();
+    }
+
+    destroy() {
+        this.peer.destroy();
     }
 }
-
-// Usage example:
-const roomId = 'your-room-id';
-const callManager = new CallManager(roomId);
-callManager.joinRoom();
