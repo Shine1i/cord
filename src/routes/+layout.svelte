@@ -1,6 +1,5 @@
 <script lang="ts">
 	import './styles.css';
-	import TitleBar from '$lib/components/TitleBar.svelte';
 	import { chat } from '$lib/Chat';
 	import MessageFeed from '$lib/components/chat_components/MessageFeed.svelte';
 	import { goto } from '$app/navigation';
@@ -8,15 +7,10 @@
 	import Authentication from '$lib/components/Authentication.svelte';
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
 	import {
-		element,
 		LocalStorage
 	} from '$lib/utils/localStorage.svelte';
 	import type { AuthModel, RecordModel } from 'pocketbase';
-	import Toaster from '$lib/Toaster.svelte';
-	import toast from '$lib/Toaster.svelte';
-	import { fly } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
-	import { getContext, setContext } from 'svelte';
+
 	
 	let toaster = $state();
 
@@ -32,8 +26,7 @@
 		pocketbase.authStore.onChange(async (token, model) => {
 			userLocalStorage.value = model;
 		});
-		chat.getChatWithUsers().then(x=>{console.log(x);
-		})
+
 	});
 
 </script>
@@ -215,6 +208,7 @@
 							avatar="{friend.avatar}"
 							name="{friend.username}"
 							lastSeen="16:33-placeholder"
+							id="{friend.id}"
 						/>
 					{/each}
 				

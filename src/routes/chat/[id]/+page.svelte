@@ -3,6 +3,7 @@
 	import type { NewMessage } from '$lib/types';
 	import ProfileHeader
 		from '$lib/components/chat_components/ProfileHeader.svelte';
+	import { page } from '$app/stores';
 	
 	let currentMessage = $state('');
 	
@@ -13,6 +14,7 @@
 	}
 	
 	let messageFeed = $state<NewMessage[]>([]);
+	console.log($page.params.id);
 	
 	// params
 	function addMessage(): void {

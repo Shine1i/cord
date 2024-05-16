@@ -17,11 +17,16 @@ class Chat {
 			});
 			const topThree = chats.slice(0, 3);
 			const lastMessagse = await Promise.all(topThree.map(async (chat) => {
-				const message = await pocketbase.collection('messages').getFirstListItem(`chat_id = '${chat.id}'`,{
-					sort: 'created',
-				});
+				try{
+					const message = await pocketbase.collection('messages').getFirstListItem(`chat_id = '${chat.id}'`,{
+						sort: 'created',
+					});
+					
+					return message;
+				}catch{
+					return undefined
+				}
 				
-				return message;
 			}));
 
 			
@@ -41,8 +46,8 @@ class Chat {
 						typedChats.push({
 							name: user.username,
 							avatar: user.avatar,
-							lastMessage: lastMessagse[i].content,
-							messageTimestamp: lastMessagse[i].created
+							lastMessage: lastMessagse?.at(i)?.content,
+							messageTimestamp: lastMessagse?.at(i)?.created
 						});
 					}
 				}
@@ -59,7 +64,7 @@ class Chat {
 
 	async createChatWithUser(username: string) {
 		try {
-			const otherUser = await pocketbase.collection('users').getFirstListItem(`username = '${username}'`);
+			const otherUser = await pocketbase.collection('users').getFirstListItem(`id = '${username}'`);
 			return await pocketbase.collection('chats').create({
 				relation: [userRune.authStore.id, otherUser.id]
 			});

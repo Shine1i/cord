@@ -1,3 +1,18 @@
+<script>
+	import {CallManager} from "$lib/CallManager";
+	import { page } from '$app/stores';
+	const callManager = new CallManager($page.params.id);
+	callManager.handleIncomingCall = (mediaConnection) => {
+		console.log("Incoming call");
+	}
+	function call() {
+		
+		callManager.joinRoom();
+	}
+	function answer(){
+		callManager.acceptCall();
+	}
+</script>
 <div class="bg-gray-500/25    rounded-lg px-4 py-4 ">
 	<div class="flex space-x-3 items-center">
 		<div class="flex-shrink-0">
@@ -18,7 +33,7 @@
 				</div>
 				<ul class="flex gap-4 items-center">
 					<li>
-						<button class="group">
+						<button onclick="{callManager.joinRoom}" class="group">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 									 fill="currentColor"
 									 class="w-5 h-5 fill-slate-200 group-hover:fill-white">
