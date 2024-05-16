@@ -57,8 +57,5 @@
 		}
 	}
 	
-	$effect(async () => {
 	
-	
-	});
 </script>

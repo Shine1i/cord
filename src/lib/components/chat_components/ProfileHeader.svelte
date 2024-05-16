@@ -3,11 +3,12 @@
 	import { LocalStorage } from "$lib/utils/localStorage.svelte";
 	import type { RecordModel } from "pocketbase";
 	import { getContext } from "svelte";
-
+	import CallDialog from '$lib/components/chat_components/CallDialog.svelte';
 	
+	let isVisibe = $state(false);
 	const callManager = getContext<CallManager>('call-manager');
 	callManager.handleIncomingCall = ()=>{
-		callManager.acceptCall()
+		isVisibe = true;
 		console.log('Incoming call');
 	}
 	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
@@ -21,6 +22,7 @@
 <div id="video-grid" >
 
 </div>
+<CallDialog isModalVisible={isVisibe} />
 <div class="bg-gray-500/25 rounded-lg px-4 py-4">
 	<div class="flex space-x-3 items-center">
 		<div class="flex-shrink-0">
