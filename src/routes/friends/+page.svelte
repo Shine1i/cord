@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
 	import type { AuthModel, ListResult, RecordModel } from 'pocketbase';
-	import { LocalStorage } from '$lib/utils/localStorage.svelte';
+	import {
+		LocalStorage
+	} from '$lib/utils/localStorage.svelte';
+	import { setContext } from 'svelte';
 	
+	export const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
 	
 	async function getFirstUserByUsername(username: string) {
 		const record = await pocketbase.collection('users').getList(1, 50, {
@@ -12,8 +16,10 @@
 		return record;
 	}
 	
-	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
-	
+	$effect(() => {
+		setContext('friends', friends_local_storage);
+		console.log('log');
+	});
 	function isFriendAdded(id: string) {
 		return friends_local_storage.value.some(friend => friend.id === id);
 	}

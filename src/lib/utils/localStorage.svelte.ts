@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import type { RecordModel } from 'pocketbase';
 
 export class LocalStorage<T>{
 	value = $state<T>() as T;
