@@ -10,6 +10,8 @@
 		LocalStorage
 	} from '$lib/utils/localStorage.svelte';
 	import type { AuthModel, RecordModel } from 'pocketbase';
+	import { setContext } from 'svelte';
+	import { CallManager } from '$lib/CallManager';
 
 	
 	let toaster = $state();
@@ -26,9 +28,10 @@
 		pocketbase.authStore.onChange(async (token, model) => {
 			userLocalStorage.value = model;
 		});
-
+		if(userRune.authStore.id)
+			setContext('call-manager', new CallManager(userRune.authStore.id));
 	});
-
+	
 </script>
 
 <!-- <TitleBar /> -->

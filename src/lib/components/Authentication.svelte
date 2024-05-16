@@ -16,6 +16,7 @@
 	}
 	
 	$effect(() => {
+		
 		console.log(password);
 		console.log(confirmPassword);
 	});

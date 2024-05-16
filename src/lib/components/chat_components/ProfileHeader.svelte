@@ -1,21 +1,26 @@
 <script lang="ts">
 	import { CallManager } from "$lib/CallManager";
-	import { pocketbase, userRune } from "$lib/pocketbase/index.svelte";
 	import { LocalStorage } from "$lib/utils/localStorage.svelte";
 	import type { RecordModel } from "pocketbase";
-	const callManager = new CallManager(userRune.authStore.id);
+	import { getContext } from "svelte";
+
+	
+	const callManager = getContext<CallManager>('call-manager');
 	callManager.handleIncomingCall = ()=>{
+		callManager.acceptCall()
 		console.log('Incoming call');
 	}
-
+	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
 	function startCall() {
-		const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
+	
 			console.log(friends_local_storage.value[0].id);
 			
 		callManager.startCall(friends_local_storage.value[0].id);
 	}
 </script>
+<div id="video-grid" >
 
+</div>
 <div class="bg-gray-500/25 rounded-lg px-4 py-4">
 	<div class="flex space-x-3 items-center">
 		<div class="flex-shrink-0">

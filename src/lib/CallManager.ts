@@ -1,13 +1,10 @@
 import Peer, {type MediaConnection} from "peerjs";
-
 export class CallManager {
     private peer: Peer;
     private screenStream: MediaStream | undefined;
     private micStream: MediaStream | undefined;
     private call: MediaConnection | undefined;
-    public handleIncomingCall: (call: MediaConnection) => void = () => {
-    };
-
+    public handleIncomingCall: (call: MediaConnection) => void = () => {};
     constructor(roomId: string) {
         this.peer = new Peer(roomId);
 
@@ -34,7 +31,7 @@ export class CallManager {
                 },
                 audio: true
             });
-            this.micStream = await navigator.mediaDevices.getUserMedia({audio: true});
+            this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             this.screenStream.addTrack(this.micStream.getAudioTracks()[0]);
         } catch (error) {
             console.error('Error starting screen sharing:', error);
@@ -46,14 +43,14 @@ export class CallManager {
             if (!this.screenStream) await this.startScreenSharing();
             this.call = this.peer.call(remotePeerId, this.screenStream!);
             this.call.on('stream', (remoteStream) => {
-                this.addVideoStream(remoteStream);
+                this.addRemoteStream(remoteStream);
             });
         } catch (error) {
             console.error('Error making the call:', error);
         }
     }
 
-    private addVideoStream(stream: MediaStream) {
+    private addRemoteStream(stream: MediaStream) {
         const video = document.createElement('video');
         const videoGrid = document.getElementById('video-grid') as HTMLElement;
         video.srcObject = stream;
@@ -63,14 +60,16 @@ export class CallManager {
         videoGrid.append(video);
     }
 
-    acceptCall() {
+    async acceptCall() {
         if (this.call) {
+            if (!this.screenStream) await this.startScreenSharing();
             this.call.answer(this.screenStream!);
             this.call.on('stream', (remoteStream) => {
-                this.addVideoStream(remoteStream);
+                this.addRemoteStream(remoteStream);
             });
         }
     }
+
 
     declineCall() {
         if (this.call) {

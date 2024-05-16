@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d839b63c-5e76-4fc9-a5c1-e95ccc08cce5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.cord.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.cord.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/CallManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/CallManager.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/components/chat_components/ProfileHeader.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/chat_components/ProfileHeader.svelte" afterDir="false" />
     </list>
@@ -68,7 +69,7 @@
       <workItem from="1713102395466" duration="204000" />
       <workItem from="1715314022426" duration="176000" />
       <workItem from="1715838534671" duration="954000" />
-      <workItem from="1715841244881" duration="297000" />
+      <workItem from="1715841244881" duration="1138000" />
     </task>
     <servers />
   </component>
