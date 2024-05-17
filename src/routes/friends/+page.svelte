@@ -1,49 +1,58 @@
 <script lang="ts">
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
-	import type { AuthModel, ListResult, RecordModel } from 'pocketbase';
-	import {
-		LocalStorage
-	} from '$lib/utils/localStorage.svelte';
-	import { setContext } from 'svelte';
+	import type { RecordModel } from 'pocketbase';
+	import { LocalStorage } from '$lib/utils/localStorage.svelte';
+	import { getContext } from 'svelte';
 	
-	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
+	const USERS_COLLECTION = 'users';
+	const friends_local_storage = getContext<LocalStorage<RecordModel[]>>('friends_local_storage');
+	const friendsList = $derived(friends_local_storage.value);
 	
-	async function getFirstUserByUsername(username: string) {
-		const record = await pocketbase.collection('users').getList(1, 50, {
+	function isDuplicateFriend(friend: RecordModel): boolean {
+		return friends_local_storage.value.some(storedFriend => storedFriend.id === friend.id);
+	}
+	
+	async function fetchFriendsList() {
+		const record = await pocketbase.collection(USERS_COLLECTION).getOne(userRune.authStore.id, {
+			expand: 'friends'
+		});
+		const newFriends: RecordModel[] = record.expand?.friends || [];
+		
+		const uniqueFriends = newFriends.filter(friend => !isDuplicateFriend(friend));
+		friends_local_storage.value.push(...uniqueFriends);
+	}
+	
+	async function searchUsersByUsername(username: string) {
+		const records = await pocketbase.collection(USERS_COLLECTION).getList(1, 50, {
 			filter: `username ~ "${username}"`
 		});
-		search_list = record.items;
-		return record;
+		searchResults = records.items;
 	}
 	
-	$effect(() => {
-		setContext('friends', friends_local_storage);
-		console.log('log');
-	});
-	function isFriendAdded(id: string) {
-		return friends_local_storage.value.some(friend => friend.id === id);
-	}
-	
-	let username = $state('');
-	let search_list = $state<RecordModel[]>([]);
-	
-	async function handleButtonClick(user: RecordModel) {
-		const alreadyAdded = isFriendAdded(user.id);
-		
-		if (alreadyAdded) {
-			await pocketbase.collection('users').update(userRune.authStore.id, { 'friends-': [`${user.id}`] });
-			friends_local_storage.value = friends_local_storage.value.filter(friend => friend.id !== user.id);
-		} else {
-			
-			await pocketbase.collection('users').update(userRune.authStore.id, { 'friends+': [`${user.id}`] });
+	async function addFriend(user: RecordModel) {
+		await pocketbase.collection(USERS_COLLECTION).update(userRune.authStore.id, { 'friends+': [user.id] });
+		await pocketbase.collection(USERS_COLLECTION).update(user.id, { 'friends+': [userRune.authStore.id] });
+		if (!isDuplicateFriend(user)) {
 			friends_local_storage.value.push(user);
 		}
+		
+		await fetchFriendsList();
 	}
 	
-	async function onSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		await getFirstUserByUsername(username);
+	async function removeFriend(user: RecordModel) {
+		await pocketbase.collection(USERS_COLLECTION).update(userRune.authStore.id, { 'friends-': [user.id] });
+		await pocketbase.collection(USERS_COLLECTION).update(user.id, { 'friends-': [userRune.authStore.id] });
+		friends_local_storage.value = friends_local_storage.value.filter(friend => friend.id !== user.id);
+		
+		await fetchFriendsList();
 	}
+	
+	let searchQuery = $state('');
+	let searchResults = $state<RecordModel[]>([]);
+	
+	$effect(async () => {
+		await fetchFriendsList();
+	});
 </script>
 <div class="mx-auto pt-6">
 	<div>
@@ -59,9 +68,10 @@
 				lately. Type username of your friend and add him.</p>
 		</div>
 		<!--		form or btn dont matter-->
-		<form action="#" class="mt-6 flex" onsubmit={onSubmit}>
+		<form action="#" class="mt-6 flex"
+					onsubmit={() => searchUsersByUsername(searchQuery)}>
 			<input
-				bind:value={username}
+				bind:value={searchQuery}
 				type="text" name="username" id="username"
 				class="block w-full bg-gray-500/25 rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-600/40  focus:outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-500 sm:text-sm sm:leading-6"
 				placeholder="Enter username">
@@ -74,11 +84,11 @@
 		</form>
 	</div>
 	<div class="mt-10">
-		{#if search_list.length > 0}
-			<h3 class="text-sm font-medium text-gray-500">Found {search_list.length}
+		{#if searchResults.length > 0}
+			<h3 class="text-sm font-medium text-gray-500">Found {searchResults.length}
 				results</h3>
 		{:else}
-			{#if friends_local_storage.value.length > 0}
+			{#if friendsList.length > 0}
 				<h3 class="text-sm font-medium text-gray-500">Previously added
 					friends</h3>
 			{:else}
@@ -87,58 +97,50 @@
 			{/if}
 		{/if}
 		<ul role="list" class="mt-4 divide-y divide-gray-600   border-slate-600">
-			{#snippet figure(search_list)}
-			<figure>
-				<li class="flex w-full items-center justify-between space-x-3 py-4">
-					<div class="flex min-w-0 flex-1   space-x-3">
+			{#each searchResults.length > 0 ? searchResults : friendsList as user}
+				<figure>
+					<li class="flex w-full items-center justify-between space-x-3 py-4">
+						<div class="flex min-w-0 flex-1   space-x-3">
+							<div class="flex-shrink-0">
+								<img
+									class="h-10 w-10 rounded-md ring-2 border border-slate-500 ring-slate-500"
+									src="{user.avatar}"
+									alt="">
+							</div>
+							<div class="min-w-0 flex-1">
+								<p
+									class="truncate text-sm font-medium text-slate-200">{user.username}</p>
+								<p class="truncate text-sm font-medium text-gray-400">last
+									seen</p>
+							</div>
+						</div>
 						<div class="flex-shrink-0">
-							<img
-								class="h-10 w-10 rounded-md ring-2 border border-slate-500 ring-slate-500"
-								src="{search_list.avatar}"
-								alt="">
+							<button
+								onclick={() => friendsList.some(friend => friend.id === user.id) ? removeFriend(user) : addFriend(user)}
+								type="button"
+								class="inline-flex items-center gap-x-1.5 hover:bg-slate-500/25  p-2 rounded-md text-sm font-semibold leading-6 text-slate-200">
+								
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+										 fill="currentColor" class="h-5 w-5 text-gray-400">
+									<path fill-rule="evenodd"
+												d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+												clip-rule="evenodd" />
+								</svg>
+								
+								{friendsList.some(friend => friend.id === user.id) ? 'Remove Friend' : 'Add Friend'}
+							
+							</button>
 						</div>
-						<div class="min-w-0 flex-1">
-							<p
-								class="truncate text-sm font-medium text-slate-200">{search_list.username}</p>
-							<p class="truncate text-sm font-medium text-gray-400">last
-								seen</p>
-						</div>
-					</div>
-					<div class="flex-shrink-0">
-						<button
-							onclick={()=>{handleButtonClick(search_list)}}
-							
-							type="button"
-							class="inline-flex items-center gap-x-1.5 hover:bg-slate-500/25  p-2 rounded-md text-sm font-semibold leading-6 text-slate-200">
-							
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-									 fill="currentColor" class="h-5 w-5 text-gray-400">
-								<path fill-rule="evenodd"
-											d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-											clip-rule="evenodd" />
-							</svg>
-							
-							{isFriendAdded(search_list.id) ? 'Remove Friend' : 'Add Friend'}
-						</button>
-					</div>
-				</li>
-			</figure>
-			{/snippet}
-			{#if search_list.length > 0}
-				{#each search_list as user}
-					{@render figure(user)}
-				{/each}
+					</li>
+				</figure>
 			{:else}
-				{#if friends_local_storage.value.length > 0}
-					{#each friends_local_storage.value as friend}
-						{@render figure(friend)}
-					{/each}
-				{:else}
-					<img class="mx-auto rounded-md"
-							 src="https://i.pinimg.com/originals/4c/80/a6/4c80a6634d18ace57eecad448664d340.gif"
-							 alt="friendless">
+				{#if searchResults.length === 0 && friendsList.length === 0}
+					<img
+						class="mx-auto rounded-md blur-sm animate-spin"
+						src="https://i.pinimg.com/originals/52/d8/40/52d84062f1a2130c2a785d998086d0cc.gif"
+						alt="friendless" />
 				{/if}
-			{/if}
+			{/each}
 		</ul>
 	</div>
 </div>

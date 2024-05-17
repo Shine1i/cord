@@ -6,32 +6,39 @@
 	import Friend from '$lib/components/Friend.svelte';
 	import Authentication from '$lib/components/Authentication.svelte';
 	import { pocketbase, userRune } from '$lib/pocketbase/index.svelte';
-	import {
-		LocalStorage
-	} from '$lib/utils/localStorage.svelte';
+	import { LocalStorage } from '$lib/utils/localStorage.svelte';
 	import type { AuthModel, RecordModel } from 'pocketbase';
 	import { setContext } from 'svelte';
 	import { CallManager } from '$lib/CallManager';
-
+	import { page } from '$app/stores';
 	
 	let toaster = $state();
-
 	let { children } = $props();
-	let layout = $state(0);
-	const userLocalStorage = new LocalStorage<AuthModel>('user', null)
+	const userLocalStorage = new LocalStorage<AuthModel>('user', null);
 	const friends_local_storage = new LocalStorage<RecordModel[]>('friends_list', []);
-	$effect(()=>{
-		
+	setContext('friends_local_storage', friends_local_storage);
+	$effect(() => {
 		if (userLocalStorage.value !== null && userLocalStorage.key !== '') {
 			userRune.authStore = userLocalStorage.value;
 		}
+		
 		pocketbase.authStore.onChange(async (token, model) => {
 			userLocalStorage.value = model;
 		});
-		if(userRune.authStore.id)
+		
+		if (userRune.authStore.id && !isCallManagerInit) {
 			setContext('call-manager', new CallManager(userRune.authStore.id));
+			isCallManagerInit = true;
+		}
+		
+		const storedFriends = friends_local_storage.value;
+		if (storedFriends && storedFriends.length > 0) {
+			friends = storedFriends;
+		}
 	});
 	
+	let isCallManagerInit = false;
+	let friends = $state<RecordModel[]>([]);
 </script>
 
 <!-- <TitleBar /> -->
@@ -45,9 +52,9 @@
 					<button
 						onclick={() => {
 							goto('/calls');
-							layout = 0;
+						
 						}}
-						class=" {layout === 0
+						class=" {$page.url.pathname === '/calls'
 							? 'bg-slate-400/30'
 							: 'bg-none'} text-slate-200 group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold"
 					>
@@ -70,9 +77,9 @@
 					<button
 						onclick={() => {
 							goto('/friends');
-							layout = 1;
+					
 						}}
-						class=" text-slate-200 {layout === 1
+						class=" text-slate-200 {$page.url.pathname === '/friends'
 							? 'bg-slate-400/30'
 							: 'bg-none'} hover:bg-slate-400/30 group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold"
 					>
@@ -94,9 +101,9 @@
 					<button
 						onclick={() => {
 							goto('#');
-							layout = 2;
+					
 						}}
-						class=" text-slate-200 {layout === 2
+						class=" text-slate-200 {$page.url.pathname === '/#'
 							? 'bg-slate-400/30'
 							: 'bg-none'} hover:bg-slate-400/30 group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold"
 					>
@@ -133,15 +140,16 @@
 			<div class="flex flex-wrap py-4 items-center justify-between sm:flex-nowrap">
 				<div class="">
 					<h3 class="text-base pl-3 font-semibold leading-6 text-white">
-						{#if layout === 0}
+						{#if $page.url.pathname === '/calls'}
 							Messages
 						{:else}
 							Friends
 						{/if}
 					</h3>
 				</div>
-
-				<button class="flex-shrink-0 text-slate-200 {layout === 0 ? 'block' : 'hidden'} ">
+				
+				<button
+					class="flex-shrink-0 text-slate-200 {$page.url.pathname === '/calls' ? 'block' : 'hidden'} ">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -188,7 +196,7 @@
 					</button>
 				</div>
 			</div>
-			{#if layout === 0}
+			{#if $page.url.pathname === '/calls'}
 				<!-- load from db -->
 				<!--todo message feed clear -->
 				{#await chat.getChatWithUsers()}
